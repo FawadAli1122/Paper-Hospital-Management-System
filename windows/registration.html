@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+        #mrNumber {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Registration Form</h2>
+    <form id="registrationForm">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="fatherHusbandName">Father/Husband Name:</label>
+        <input type="text" id="fatherHusbandName" name="fatherHusbandName" required>
+
+        <label for="cnic">CNIC:</label>
+        <input type="text" id="cnic" name="cnic" required>
+
+        <label for="address">Address:</label>
+        <input type="text" id="address" name="address" required>
+
+        <label for="age">Age:</label>
+        <input type="number" id="age" name="age" required>
+
+        <label for="gender">Gender:</label>
+        <select id="gender" name="gender" required>
+            <option value="">Select Gender</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+        </select>
+
+        <div id="mrNumber"></div>
+
+        <input type="submit" value="Register">
+    </form>
+
+    <script>
+        const registrationForm = document.getElementById('registrationForm');
+        const mrNumberDiv = document.getElementById('mrNumber');
+
+        registrationForm.addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent form submission
+
+            // Collect form data
+            const formData = new FormData(registrationForm);
+            const formDataObject = {};
+            formData.forEach((value, key) => {
+                formDataObject[key] = value;
+            });
+
+            // Generate MR# based on a unique serial number (you need to implement this logic)
+            const mrNumber = generateMRNumber();
+
+            // Add MR# to the form
+            mrNumberDiv.textContent = `MR#: ${mrNumber}`;
+
+            // Send the form data to the main process (main.js)
+            window.ipcRenderer.send('registerPatient', { ...formDataObject, mrNumber });
+        });
+
+        // Generate a unique MR# (placeholder function, implement your logic)
+        function generateMRNumber() {
+            const prefix = 'MR'; // Prefix for MR#
+            const timestamp = Date.now(); // Get current timestamp (milliseconds since epoch)
+            const randomSuffix = Math.floor(Math.random() * 10000); // Generate a random 4-digit number
+
+            return `${prefix}${timestamp}${randomSuffix}`;
+        }
+    </script>
+</body>
+</html>
